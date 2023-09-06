@@ -71,7 +71,7 @@ public partial class PartyCharacter
 
 
 #region Assignment Part 1
-
+//done
 static public class AssignmentPart1
 {
 
