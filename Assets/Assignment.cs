@@ -78,10 +78,8 @@ static public class AssignmentPart1
     static public void SavePartyButtonPressed()
     {
         //Create File
-        using (StreamWriter file = new StreamWriter("SavedCharacters.txt"))
+        using (StreamWriter file = new StreamWriter(Application.persistentDataPath+"SavedCharacters.txt"))
         {
-            //Clear old data
-            file.Flush();
 
             // save each character
             foreach (PartyCharacter pc in GameContent.partyCharacters)
@@ -114,16 +112,17 @@ static public class AssignmentPart1
         try
         {
             // Open file
-            using (StreamReader file = new StreamReader("SavedCharacters.txt"))
+            using (StreamReader file = new StreamReader(Application.persistentDataPath + "SavedCharacters.txt"))
             {
                 string line = null;
 
-
+                // store character stats temp
                 LinkedList<int> savedEquipment = new LinkedList<int>();
                 int[] savedCharacterStats = new int[6];
 
                 // Counter for stats
                 int statsPlaceCounter = 0;
+
                 while ((line = file.ReadLine()) != null)
                 {
                     // Equipment section
@@ -134,12 +133,7 @@ static public class AssignmentPart1
                             savedEquipment.AddLast(int.Parse(line));
                         }
                     }
-                    // Character stats loading
-                    else
-                    {
-                        savedCharacterStats[statsPlaceCounter++] = int.Parse(line);
-                    }
-
+                    
                     // Data is loaded now to create charcter
                     if (line == "")
                     {
@@ -148,6 +142,15 @@ static public class AssignmentPart1
                         pc.equipment = savedEquipment;
                         GameContent.partyCharacters.AddLast(pc);
                     }
+
+
+                    // Character stats loading
+                    else
+                    {
+                        savedCharacterStats[statsPlaceCounter++] = int.Parse(line);
+                    }
+
+                    
 
                 }
             }
