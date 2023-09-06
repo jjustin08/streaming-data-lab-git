@@ -184,13 +184,13 @@ public class SystemManager : MonoBehaviour
 
     public void SaveButtonPressed()
     {
-        AssignmentPart1.SavePartyButtonPressed();
+        AssignmentPart1.SavePartyButtonPressed("Example");
 
     }
 
     public void LoadButtonPressed()
     {
-        AssignmentPart1.LoadPartyButtonPressed();
+        AssignmentPart1.LoadPartyButtonPressed("Example");
     }
 
     public void LoadDropDownChanged()
@@ -214,7 +214,10 @@ public class SystemManager : MonoBehaviour
 
     public void DeleteButtonPressed()
     {
-        AssignmentPart2.DeletePartyButtonPressed();
+        int menuIndex = loadPartyDropDown.GetComponent<Dropdown>().value;
+        List<Dropdown.OptionData> menuOptions = loadPartyDropDown.GetComponent<Dropdown>().options;
+        string value = menuOptions[menuIndex].text;
+        AssignmentPart2.DeletePartyButtonPressed(value);
     }
 
     public string GetPartyNameFromInput()

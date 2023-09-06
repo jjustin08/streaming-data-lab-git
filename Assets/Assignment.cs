@@ -75,10 +75,10 @@ public partial class PartyCharacter
 static public class AssignmentPart1
 {
 
-    static public void SavePartyButtonPressed()
+    static public void SavePartyButtonPressed(string partyName)
     {
         //Create File
-        using (StreamWriter file = new StreamWriter(Application.persistentDataPath+"SavedCharacters.txt"))
+        using (StreamWriter file = new StreamWriter(Application.persistentDataPath+ partyName))
         {
 
             // save each character
@@ -105,14 +105,14 @@ static public class AssignmentPart1
 
     }
 
-    static public void LoadPartyButtonPressed()
+    static public void LoadPartyButtonPressed(string partyName)
     {
         GameContent.partyCharacters.Clear();
 
         try
         {
             // Open file
-            using (StreamReader file = new StreamReader(Application.persistentDataPath + "SavedCharacters.txt"))
+            using (StreamReader file = new StreamReader(Application.persistentDataPath + partyName))
             {
                 string line = null;
 
@@ -177,7 +177,7 @@ static public class AssignmentPart1
 //  This will enable the needed UI/function calls for your to proceed with your assignment.
 static public class AssignmentConfiguration
 {
-    public const int PartOfAssignmentThatIsInDevelopment = 1;
+    public const int PartOfAssignmentThatIsInDevelopment = 2;
 }
 
 /*
@@ -221,9 +221,6 @@ static public class AssignmentPart2
     static public void GameStart()
     {
         listOfPartyNames = new List<string>();
-        listOfPartyNames.Add("sample 1");
-        listOfPartyNames.Add("sample 2");
-        listOfPartyNames.Add("sample 3");
 
         GameContent.RefreshUI();
     }
@@ -235,16 +232,27 @@ static public class AssignmentPart2
 
     static public void LoadPartyDropDownChanged(string selectedName)
     {
+        AssignmentPart1.LoadPartyButtonPressed(selectedName);
         GameContent.RefreshUI();
     }
 
     static public void SavePartyButtonPressed()
     {
+        if(!GetListOfPartyNames().Contains(GameContent.GetPartyNameFromInput()))
+        {
+            GetListOfPartyNames().Add(GameContent.GetPartyNameFromInput());
+        }
+        AssignmentPart1.SavePartyButtonPressed(GameContent.GetPartyNameFromInput());
+       
         GameContent.RefreshUI();
     }
 
-    static public void DeletePartyButtonPressed()
+    static public void DeletePartyButtonPressed(string selectedName)
     {
+        GameContent.partyCharacters.Clear();
+        AssignmentPart1.SavePartyButtonPressed(selectedName);
+        GetListOfPartyNames().Remove(selectedName);
+        
         GameContent.RefreshUI();
     }
 
