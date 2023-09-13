@@ -77,14 +77,32 @@ static public class AssignmentPart1
 
     static public void SavePartyButtonPressed(string partyName)
     {
-        //Create File
-        using (StreamWriter file = new StreamWriter(Application.persistentDataPath+ partyName))
-        {
+        //string name = "Justin";
+        //Debug.Log(name);
+        //string[] letters = name.Split("u");
+        //Debug.Log(letters[0]);
+        //Debug.Log(letters[1]);
+        //Debug.Log(int.Parse("red"));
 
+
+        //string name = nameof(pc.classID) + "=" + pc.classID;
+        //Debug.Log(name);
+
+        //string[] data = name.Split('=');
+        //if(data[0] == nameof(pc.classID))
+        //{
+        //    int classID = int.Parse(data[1]);
+        //}
+
+        //Create File
+        using (StreamWriter file = new StreamWriter(Application.persistentDataPath + partyName))
+        {
+            //path.directorysepchar + "folder"
             // save each character
             foreach (PartyCharacter pc in GameContent.partyCharacters)
             {
                 // Stats
+                //file.WriteLine(0,pc.classID + "," + pc.health);
                 file.WriteLine(pc.classID);
                 file.WriteLine(pc.health);
                 file.WriteLine(pc.mana);
@@ -101,6 +119,8 @@ static public class AssignmentPart1
                 file.WriteLine("");
                 
             }
+            
+            //file.Close();
         }
 
     }
@@ -177,7 +197,7 @@ static public class AssignmentPart1
 //  This will enable the needed UI/function calls for your to proceed with your assignment.
 static public class AssignmentConfiguration
 {
-    public const int PartOfAssignmentThatIsInDevelopment = 2;
+    public const int PartOfAssignmentThatIsInDevelopment = 1;
 }
 
 /*
