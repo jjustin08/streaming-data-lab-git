@@ -75,111 +75,44 @@ public partial class PartyCharacter
 static public class AssignmentPart1
 {
 
-    static public void SavePartyButtonPressed(string partyName)
+    static public void SavePartyButtonPressed()
     {
-        //string name = "Justin";
-        //Debug.Log(name);
-        //string[] letters = name.Split("u");
-        //Debug.Log(letters[0]);
-        //Debug.Log(letters[1]);
-        //Debug.Log(int.Parse("red"));
+        StreamWriter writer = new StreamWriter(Application.dataPath + "SavedParty.txt");
 
 
-        //string name = nameof(pc.classID) + "=" + pc.classID;
-        //Debug.Log(name);
-
-        //string[] data = name.Split('=');
-        //if(data[0] == nameof(pc.classID))
-        //{
-        //    int classID = int.Parse(data[1]);
-        //}
-
-        //Create File
-        using (StreamWriter file = new StreamWriter(Application.persistentDataPath + partyName))
+        foreach(PartyCharacter character in GameContent.partyCharacters)
         {
-            //path.directorysepchar + "folder"
-            // save each character
-            foreach (PartyCharacter pc in GameContent.partyCharacters)
+            string tempString = "";
+            // save stats
+            tempString = "0,"+ character.classID+ "," + character.health + "," + character.mana +"," 
+                + character.strength +"," + character.agility + "," + character.wisdom;
+            writer.WriteLine(tempString);
+            // save equipment
+            foreach(int e in character.equipment)
             {
-                // Stats
-                //file.WriteLine(0,pc.classID + "," + pc.health);
-                file.WriteLine(pc.classID);
-                file.WriteLine(pc.health);
-                file.WriteLine(pc.mana);
-                file.WriteLine(pc.strength);
-                file.WriteLine(pc.agility);
-                file.WriteLine(pc.wisdom);
-                // Equipment
-                file.WriteLine("-");
-                foreach(int eq in pc.equipment)
-                {
-                    file.WriteLine(eq);
-                }
-                // End Character
-                file.WriteLine("");
-                
+                tempString = "1," + e;
+                writer.WriteLine(tempString);
             }
-            
-            //file.Close();
-        }
 
+            // end of character
+            tempString = "2";
+            writer.WriteLine(tempString);
+        }
+        
+
+
+        writer.Close();
     }
 
     static public void LoadPartyButtonPressed(string partyName)
     {
         GameContent.partyCharacters.Clear();
 
-        try
-        {
-            // Open file
-            using (StreamReader file = new StreamReader(Application.persistentDataPath + partyName))
-            {
-                string line = null;
-
-                // store character stats temp
-                LinkedList<int> savedEquipment = new LinkedList<int>();
-                int[] savedCharacterStats = new int[6];
-
-                // Counter for stats
-                int statsPlaceCounter = 0;
-
-                while ((line = file.ReadLine()) != null)
-                {
-                    // Equipment section
-                    if(line =="-")
-                    {
-                        while((line = file.ReadLine()) != "")
-                        {
-                            savedEquipment.AddLast(int.Parse(line));
-                        }
-                    }
-                    
-                    // Data is loaded now to create charcter
-                    if (line == "")
-                    {
-                        statsPlaceCounter = 0;
-                        PartyCharacter pc = new PartyCharacter(savedCharacterStats[0], savedCharacterStats[1], savedCharacterStats[2], savedCharacterStats[3], savedCharacterStats[4], savedCharacterStats[5]);
-                        pc.equipment = savedEquipment;
-                        GameContent.partyCharacters.AddLast(pc);
-                    }
+        
 
 
-                    // Character stats loading
-                    else
-                    {
-                        savedCharacterStats[statsPlaceCounter++] = int.Parse(line);
-                    }
 
-                    
 
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.Log("No File");
-            Debug.Log(e);
-        }
         GameContent.RefreshUI();
     }
 
@@ -262,7 +195,7 @@ static public class AssignmentPart2
         {
             GetListOfPartyNames().Add(GameContent.GetPartyNameFromInput());
         }
-        AssignmentPart1.SavePartyButtonPressed(GameContent.GetPartyNameFromInput());
+       //AssignmentPart1.SavePartyButtonPressed(GameContent.GetPartyNameFromInput());
        
         GameContent.RefreshUI();
     }
@@ -270,7 +203,7 @@ static public class AssignmentPart2
     static public void DeletePartyButtonPressed(string selectedName)
     {
         GameContent.partyCharacters.Clear();
-        AssignmentPart1.SavePartyButtonPressed(selectedName);
+        //AssignmentPart1.SavePartyButtonPressed(selectedName);
         GetListOfPartyNames().Remove(selectedName);
         
         GameContent.RefreshUI();
