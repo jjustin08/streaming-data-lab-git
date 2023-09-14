@@ -104,14 +104,45 @@ static public class AssignmentPart1
         writer.Close();
     }
 
-    static public void LoadPartyButtonPressed(string partyName)
+    static public void LoadPartyButtonPressed()
     {
         GameContent.partyCharacters.Clear();
 
-        
+        StreamReader reader = new StreamReader(Application.dataPath + "SavedParty.txt");
 
+        string line;
+        PartyCharacter character = new PartyCharacter(); ;
+        while((line = reader.ReadLine()) != null)
+        {
+            string[] splitLine = line.Split(',');
+            switch (splitLine[0])
+            {
+                // stats
+                case "0":
+                    character = new PartyCharacter();
+                    character.classID = int.Parse(splitLine[1]);
+                    character.health = int.Parse(splitLine[2]);
+                    character.mana = int.Parse(splitLine[3]);
+                    character.strength = int.Parse(splitLine[4]);
+                    character.agility = int.Parse(splitLine[5]);
+                    character.wisdom = int.Parse(splitLine[6]);
+                    character.equipment.Clear();
+                    break;
+                    //equipment
+                case "1":
+                    character.equipment.AddLast(int.Parse(splitLine[1]));
+                    break; 
+                    //end of character
+                case "2":
+                    GameContent.partyCharacters.AddLast(character);
+                    break;
+            
+            
+            }
 
+        }
 
+        reader.Close();
 
         GameContent.RefreshUI();
     }
@@ -185,7 +216,7 @@ static public class AssignmentPart2
 
     static public void LoadPartyDropDownChanged(string selectedName)
     {
-        AssignmentPart1.LoadPartyButtonPressed(selectedName);
+        //AssignmentPart1.LoadPartyButtonPressed(selectedName);
         GameContent.RefreshUI();
     }
 

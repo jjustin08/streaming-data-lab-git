@@ -184,13 +184,13 @@ public class SystemManager : MonoBehaviour
 
     public void SaveButtonPressed()
     {
-        AssignmentPart1.SavePartyButtonPressed("Example");
+        AssignmentPart1.SavePartyButtonPressed();
 
     }
 
     public void LoadButtonPressed()
     {
-        AssignmentPart1.LoadPartyButtonPressed("Example");
+        AssignmentPart1.LoadPartyButtonPressed();
     }
 
     public void LoadDropDownChanged()
