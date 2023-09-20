@@ -4,10 +4,10 @@ This RPG data streaming assignment was created by Fernando Restituto with
 pixel RPG characters created by Sean Browning.
 */
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 
@@ -71,81 +71,153 @@ public partial class PartyCharacter
 
 
 #region Assignment Part 1
-//done
+
+
+static public class dataSignifiers
+{
+    public const int CharacterStats = 0;
+    public const int Equipment = 1;
+}
+
+
 static public class AssignmentPart1
 {
+    const char sepchar = ',';
 
     static public void SavePartyButtonPressed(string fileName)
     {
+        
+        LinkedList<string> seralizedData = SeralizePartyData();
+
+        #region saving to file
+
         StreamWriter writer = new StreamWriter(Application.dataPath + fileName + ".txt");
 
-
-        foreach(PartyCharacter character in GameContent.partyCharacters)
-        {
-            string tempString = "";
-            // save stats
-            tempString = "0,"+ character.classID+ "," + character.health + "," + character.mana +"," 
-                + character.strength +"," + character.agility + "," + character.wisdom;
-            writer.WriteLine(tempString);
-            // save equipment
-            foreach(int e in character.equipment)
-            {
-                tempString = "1," + e;
-                writer.WriteLine(tempString);
-            }
-
-            // end of character
-            tempString = "2";
-            writer.WriteLine(tempString);
+        foreach (string line in seralizedData)
+        { 
+            writer.WriteLine(line);
         }
-        
-
 
         writer.Close();
+
+        #endregion
+
     }
+
 
     static public void LoadPartyButtonPressed(string fileName)
     {
         GameContent.partyCharacters.Clear();
 
-        StreamReader reader = new StreamReader(Application.dataPath + fileName + ".txt");
+        LinkedList<string> seralizedData = new LinkedList<string>();
 
-        string line;
-        PartyCharacter character = new PartyCharacter(); ;
-        while((line = reader.ReadLine()) != null)
+
+        #region load data from file
+
+        StreamReader reader = new StreamReader(Application.dataPath + fileName + ".txt");
+        while(!reader.EndOfStream)
         {
-            string[] splitLine = line.Split(',');
-            switch (splitLine[0])
-            {
-                // stats
-                case "0":
-                    character = new PartyCharacter();
-                    character.classID = int.Parse(splitLine[1]);
-                    character.health = int.Parse(splitLine[2]);
-                    character.mana = int.Parse(splitLine[3]);
-                    character.strength = int.Parse(splitLine[4]);
-                    character.agility = int.Parse(splitLine[5]);
-                    character.wisdom = int.Parse(splitLine[6]);
-                    character.equipment.Clear();
-                    break;
-                    //equipment
-                case "1":
-                    character.equipment.AddLast(int.Parse(splitLine[1]));
-                    break; 
-                    //end of character
-                case "2":
-                    GameContent.partyCharacters.AddLast(character);
-                    break;
-            
-            
-            }
+            string line = reader.ReadLine();
+            seralizedData.AddLast(line);
 
         }
 
         reader.Close();
 
+        #endregion
+
+
+        DeseralizeData(seralizedData);
+        
+
         GameContent.RefreshUI();
     }
+    static public LinkedList<string> SeralizePartyData()
+    {
+
+        LinkedList<string> data = new LinkedList<string>();
+
+        foreach (PartyCharacter character in GameContent.partyCharacters)
+        {
+            string tempString = "";
+
+            tempString = Concatenate(
+                dataSignifiers.CharacterStats.ToString()
+                , character.classID.ToString()
+                , character.health.ToString()
+                , character.mana.ToString()
+                , character.strength.ToString()
+                , character.agility.ToString()
+                , character.wisdom.ToString());
+
+            data.AddLast(tempString);
+
+            
+            foreach (int e in character.equipment)
+            {
+
+                tempString = Concatenate(dataSignifiers.Equipment.ToString(), e.ToString());
+                
+                data.AddLast(tempString);
+            }
+        }
+
+
+        return data;
+    }
+
+
+    static public void DeseralizeData(LinkedList<string> sereralizedData)
+    {
+        PartyCharacter pc = new PartyCharacter();
+
+        foreach (string s in sereralizedData)
+        {
+            string[] splitLine = s.Split(sepchar);
+            
+            int signifyer = int.Parse(splitLine[0]);
+            
+            switch (signifyer) 
+            {
+                case dataSignifiers.CharacterStats:
+                    pc = new PartyCharacter();
+                    pc.classID = int.Parse(splitLine[1]);
+                    pc.health = int.Parse(splitLine[2]);
+                    pc.mana = int.Parse(splitLine[3]);
+                    pc.strength = int.Parse(splitLine[4]);
+                    pc.agility = int.Parse(splitLine[5]);
+                    pc.wisdom = int.Parse(splitLine[6]);
+                    GameContent.partyCharacters.AddLast(pc);
+                    break;
+
+                case dataSignifiers.Equipment:
+                    pc.equipment.AddLast(int.Parse(splitLine[1]));
+                    break;
+            
+            
+            }
+        
+        }
+
+    }
+
+    static public string Concatenate(params string[] stringsToJoin)
+    {
+        string joinedString = "";
+
+        if (joinedString != "")
+            joinedString += sepchar;
+
+        foreach (string s in stringsToJoin)
+        {
+            joinedString += s;
+            joinedString += sepchar;
+        }
+
+        return joinedString;
+    }
+  
+    
 
 }
 
@@ -161,7 +233,7 @@ static public class AssignmentPart1
 //  This will enable the needed UI/function calls for your to proceed with your assignment.
 static public class AssignmentConfiguration
 {
-    public const int PartOfAssignmentThatIsInDevelopment = 2;
+    public const int PartOfAssignmentThatIsInDevelopment = 1;
 }
 
 /*
